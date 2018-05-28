@@ -32,11 +32,6 @@ public abstract class LazyFragment extends BaseFragment {
      * <pre>
      *
      * 忽略isFirstLoad的值，强制刷新数据，但仍要Visible & Prepared
-     * 一般用于PagerAdapter需要刷新各个子Fragment的场景
-     * 不要new 新的 PagerAdapter 而采取reset数据的方式
-     * 所以要求Fragment重新走initData方法
-     * 故使用 {@link #setForceLoad(boolean)}来让Fragment下次执行initData
-     * </pre>
      */
     private boolean forceLoad = false;
 
@@ -109,25 +104,25 @@ public abstract class LazyFragment extends BaseFragment {
     /**
      * 可见
      */
-    protected void onVisible() {
+    protected final void onVisible() {
         isFragmentVisible = true;
+        onFragmentVisibleChange(isFirstLoad, true);
         lazyLoad();
-        onFragmentVisibleChange(true);
     }
 
     /**
      * 不可见
      */
-    protected void onInvisible() {
+    protected final void onInvisible() {
         isFragmentVisible = false;
-        onFragmentVisibleChange(false);
+        onFragmentVisibleChange(isFirstLoad, false);
     }
 
     /**
      * 要实现延迟加载Fragment内容,需要在 onCreateView
      * isPrepared = true;
      */
-    protected void lazyLoad() {
+    protected final void lazyLoad() {
         if (isPrepared() && isFragmentVisible()) {
             if (forceLoad || isFirstLoad()) {
                 forceLoad = false;
@@ -148,22 +143,22 @@ public abstract class LazyFragment extends BaseFragment {
      *
      * @return
      */
-    public boolean isPrepared() {
+    public final boolean isPrepared() {
         return isPrepared;
     }
 
     /**
      * 忽略isFirstLoad的值，强制刷新数据，但仍要Visible & Prepared
      */
-    public void setForceLoad(boolean forceLoad) {
+    public final void setForceLoad(boolean forceLoad) {
         this.forceLoad = forceLoad;
     }
 
-    public boolean isFirstLoad() {
+    public final boolean isFirstLoad() {
         return isFirstLoad;
     }
 
-    public boolean isFragmentVisible() {
+    public final boolean isFragmentVisible() {
         return isFragmentVisible;
     }
 
@@ -178,10 +173,11 @@ public abstract class LazyFragment extends BaseFragment {
      * 如果当前fragment是第一次加载，等待onCreateView后才会回调该方法，其它情况回调时机跟 {@link #setUserVisibleHint(boolean)}一致
      * 在该回调方法中你可以做一些加载数据操作，甚至是控件的操作，因为配合fragment的view复用机制，你不用担心在对控件操作中会报 null 异常
      *
-     * @param isVisible true  不可见 -> 可见
-     *                  false 可见  -> 不可见
+     * @param isFirstLoad 第一次加载
+     * @param isVisible   true  不可见 -> 可见
+     *                    false 可见  -> 不可见
      */
-    protected void onFragmentVisibleChange(boolean isVisible) {
+    protected void onFragmentVisibleChange(boolean isFirstLoad, boolean isVisible) {
 
     }
 
