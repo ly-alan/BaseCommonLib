@@ -39,7 +39,7 @@ public class NetUtils {
      */
     public static final byte NETWORK_TYPE_4G = 2;
 
-    public static NetworkType type = NetworkType.NONE;
+    public static NetworkType type = null;
     public static List<NetworkListener> listener = new ArrayList<NetworkListener>();
 
     /**
